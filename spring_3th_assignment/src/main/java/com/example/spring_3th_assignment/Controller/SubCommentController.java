@@ -15,11 +15,13 @@ public class SubCommentController {
 
     private final SubCommentService subCommentService;
 
+    //대댓글 작성
     @RequestMapping(value = "/api/auth/subcomment", method = RequestMethod.POST)
     public ResponseDto<?> createSubComment(@RequestBody SubCommentRequestDto subCommentRequestDto, HttpServletRequest request ) {
         return subCommentService.createSubComment(subCommentRequestDto, request);
     }
 
+    //대댓글 조회
     @RequestMapping(value = "/api/subcomment/{commentId}", method = RequestMethod.GET)
     public ResponseDto<?> getAllSubComments(@PathVariable Long commentId){
         return subCommentService.getAllSubCommentsByComment(commentId);

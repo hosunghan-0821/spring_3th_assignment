@@ -50,6 +50,7 @@ public class TokenProvider {
 
     Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
     String accessToken = Jwts.builder()
+            // 여기서 맴버의 닉네임을 넣어줌
         .setSubject(member.getNickname())
         .claim(AUTHORITIES_KEY, Authority.ROLE_MEMBER.toString())
         .setExpiration(accessTokenExpiresIn)
@@ -95,6 +96,7 @@ public class TokenProvider {
 //    return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 //  }
 
+  // 멤버 변환??
   public Member getMemberFromAuthentication() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || AnonymousAuthenticationToken.class.
@@ -104,9 +106,11 @@ public class TokenProvider {
     return ((UserDetailsImpl) authentication.getPrincipal()).getMember();
   }
 
+
   public boolean validateToken(String token) {
     try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+      // 여기서 토큰 검증함
       return true;
     } catch (SecurityException | MalformedJwtException e) {
       log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");

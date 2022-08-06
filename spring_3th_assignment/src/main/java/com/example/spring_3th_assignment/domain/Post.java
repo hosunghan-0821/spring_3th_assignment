@@ -17,30 +17,29 @@ import java.util.List;
 @Entity
 public class Post extends Timestamped {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false)
-  private String title;
+    @Column(nullable = false)
+    private String title;
 
-  @Column(nullable = false)
-  private String content;
+    @Column(nullable = false)
+    private String content;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Comment> comments;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
-  @JoinColumn(name = "member_id", nullable = false)
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Member member;
+    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
-  public void update(PostRequestDto postRequestDto) {
-    this.title = postRequestDto.getTitle();
-    this.content = postRequestDto.getContent();
-  }
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+    }
 
-  public boolean validateMember(Member member) {
-    return !this.member.equals(member);
-  }
-
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 }

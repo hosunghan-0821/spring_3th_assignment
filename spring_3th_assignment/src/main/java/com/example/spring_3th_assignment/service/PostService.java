@@ -5,12 +5,15 @@ import com.example.spring_3th_assignment.Controller.request.PostRequestDto;
 import com.example.spring_3th_assignment.Controller.response.CommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.PostResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
+import com.example.spring_3th_assignment.Controller.response.SubCommentResponseDto;
 import com.example.spring_3th_assignment.domain.Comment;
 import com.example.spring_3th_assignment.domain.Member;
 import com.example.spring_3th_assignment.domain.Post;
+import com.example.spring_3th_assignment.domain.SubComment;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
 import com.example.spring_3th_assignment.repository.CommentRepository;
 import com.example.spring_3th_assignment.repository.PostRepository;
+import com.example.spring_3th_assignment.repository.SubCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +29,7 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
+  private final SubCommentRepository subCommentRepository;
 
   private final TokenProvider tokenProvider;
 
@@ -80,6 +84,7 @@ public class PostService {
               .id(comment.getId())
               .author(comment.getMember().getNickname())
               .content(comment.getContent())
+//              .subCommentResponseDtoList(subCommentResponseDtoList)
               .createdAt(comment.getCreatedAt())
               .modifiedAt(comment.getModifiedAt())
               .build()

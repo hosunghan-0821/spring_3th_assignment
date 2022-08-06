@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -20,6 +22,9 @@ public class Comment extends Timestamped {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
+  private String content;
+
   @JoinColumn(name = "member_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
@@ -28,8 +33,14 @@ public class Comment extends Timestamped {
   @ManyToOne(fetch = FetchType.LAZY)
   private Post post;
 
-  @Column(nullable = false)
-  private String content;
+//  @JoinColumn(name = "comment_id")
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  private Comment comment;
+//
+//  @OneToMany(mappedBy = "comment")
+//  private List<Comment> subComment = new ArrayList<>();
+
+
 
   public void update(CommentRequestDto commentRequestDto) {
     this.content = commentRequestDto.getContent();

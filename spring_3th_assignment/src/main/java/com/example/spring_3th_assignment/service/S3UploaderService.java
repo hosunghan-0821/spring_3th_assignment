@@ -26,7 +26,6 @@ public class S3UploaderService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
     public String uploadFiles(MultipartFile multipartFile , String dirName)throws IOException{
         File uploadFile =convert(multipartFile)
                 .orElseThrow(()->new IllegalArgumentException("ERROR :  MultipartFile -> File convert fail"));
@@ -45,7 +44,7 @@ public class S3UploaderService {
 
     //S3 업로드
     private String putS3(File uploadFile, String fileName){
-        PutObjectResult putObjectResult =  amazonS3Client.putObject(new PutObjectRequest(bucket,fileName,uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        amazonS3Client.putObject(new PutObjectRequest(bucket,fileName,uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket,fileName).toString();
     }
 

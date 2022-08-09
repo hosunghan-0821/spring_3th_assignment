@@ -30,7 +30,7 @@ public class TokenProvider {
 
   private static final String AUTHORITIES_KEY = "auth";
   private static final String BEARER_PREFIX = "Bearer ";
-  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            //30분
+  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;            //1일
   private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24 * 7;     //7일
 
   private final Key key;
@@ -49,6 +49,7 @@ public class TokenProvider {
 
     Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
     String accessToken = Jwts.builder()
+            // 여기서 맴버의 닉네임을 넣어줌
         .setSubject(member.getNickname())
         .claim(AUTHORITIES_KEY, Authority.ROLE_MEMBER.toString())
         .setExpiration(accessTokenExpiresIn)
@@ -56,6 +57,7 @@ public class TokenProvider {
         .compact();
 
     String refreshToken = Jwts.builder()
+        .setSubject(String.valueOf(member.getId())) // 추가한 부분
         .setExpiration(new Date(now + REFRESH_TOKEN_EXPRIRE_TIME))
         .signWith(key, SignatureAlgorithm.HS256)
         .compact();
@@ -87,9 +89,11 @@ public class TokenProvider {
     return ((UserDetailsImpl) authentication.getPrincipal()).getMember();
   }
 
+
   public boolean validateToken(String token) {
     try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+      // 여기서 토큰 검증함
       return true;
     } catch (SecurityException | MalformedJwtException e) {
       log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
@@ -102,7 +106,6 @@ public class TokenProvider {
     }
     return false;
   }
-
 
 
   @Transactional(readOnly = true)

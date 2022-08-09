@@ -63,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().println(
             new ObjectMapper().writeValueAsString(
-                ResponseDto.fail("BAD_REQUEST", "Token이 유효햐지 않습니다.")
+                ResponseDto.fail("BAD_REQUEST", "Token이 유효해지 않습니다.")
             )
         );
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -79,6 +79,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
       Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
       SecurityContextHolder.getContext().setAuthentication(authentication);
+
     }
 
     filterChain.doFilter(request, response);
@@ -90,5 +91,4 @@ public class JwtFilter extends OncePerRequestFilter {
     }
     return null;
   }
-
 }

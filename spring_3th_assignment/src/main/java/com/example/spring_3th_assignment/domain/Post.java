@@ -5,7 +5,10 @@ import com.example.spring_3th_assignment.Controller.request.PostRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @Getter
@@ -29,8 +32,34 @@ public class Post extends Timestamped {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comment;
 
+
+
+  @Column(nullable = false)
+  private Long likeCount;
+
+  public void update(PostRequestDto postRequestDto) {
+    this.title = postRequestDto.getTitle();
+    this.content = postRequestDto.getContent();
+  }
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReComment> reComment;
+
+
+
+
+
+
+  @OneToMany(fetch = LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
+  private List<PostLike> postLikeList = new ArrayList<>();
+
+
+  public void mappingPostLike(PostLike postLike) {
+    this.postLikeList.add(postLike);
+  }
+
+
+
 
 
     @JoinColumn(name = "member_id", nullable = false)
@@ -41,12 +70,8 @@ public class Post extends Timestamped {
     private List<Image> images;
 
 
-    public void update(PostRequestDto postRequestDto) {
-        this.title = postRequestDto.getTitle();
-        this.content = postRequestDto.getContent();
-    }
-
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
     }
+
 }

@@ -79,6 +79,7 @@ public class TokenProvider {
 
   }
 
+
   public Member getMemberFromAuthentication() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || AnonymousAuthenticationToken.class.

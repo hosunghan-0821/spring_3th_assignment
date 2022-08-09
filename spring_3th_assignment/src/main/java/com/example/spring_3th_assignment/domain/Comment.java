@@ -6,6 +6,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @Getter
@@ -35,7 +39,29 @@ public class Comment extends Timestamped {
   @Column(nullable = false)
   private String content;
 
-  public void update(CommentRequestDto commentRequestDto) {
+
+  @Column(nullable = false)
+  private long likeCount;
+
+
+  @OneToMany(fetch = LAZY, mappedBy = "comment", cascade = CascadeType.REMOVE)
+  private List<CommentLike> commentLikeList = new ArrayList<>();
+
+  public void mappingCommentLike(CommentLike commentLike) {
+    this.commentLikeList.add(commentLike);
+  }
+
+  public void updateLikeCount() {
+    this.likeCount = (long) this.commentLikeList.size();
+  }
+
+  public void discountLike(CommentLike commentLike) {
+    this.commentLikeList.remove(commentLike);
+
+  }
+
+
+    public void update(CommentRequestDto commentRequestDto) {
     this.content = commentRequestDto.getContent();
   }
 

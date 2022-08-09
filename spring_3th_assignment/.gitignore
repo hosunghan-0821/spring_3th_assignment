@@ -1,5 +1,4 @@
 application.properties
-
 HELP.md
 .gradle
 build/
@@ -27,7 +26,6 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-application.properties
 
 ### NetBeans ###
 /nbproject/private/

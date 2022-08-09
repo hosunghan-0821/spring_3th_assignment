@@ -29,6 +29,7 @@ public class MemberController {
         return memberService.login(requestDto, response);
     }
 
+
     @RequestMapping(value = "/api/auth/member/logout", method = RequestMethod.POST)
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logout(request);

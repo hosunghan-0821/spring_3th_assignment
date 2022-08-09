@@ -9,9 +9,12 @@ import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.domain.Comment;
 import com.example.spring_3th_assignment.domain.Member;
 import com.example.spring_3th_assignment.domain.Post;
+import com.example.spring_3th_assignment.domain.PostLike;
 import com.example.spring_3th_assignment.domain.ReComment;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
 import com.example.spring_3th_assignment.repository.CommentRepository;
+import com.example.spring_3th_assignment.repository.MemberRepository;
+import com.example.spring_3th_assignment.repository.PostLikeRepository;
 import com.example.spring_3th_assignment.repository.PostRepository;
 import com.example.spring_3th_assignment.repository.ReCommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,12 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final ReCommentRepository reCommentRepository;
 
-    private final TokenProvider tokenProvider;
+
+  private final PostLikeRepository postLikeRepository;
+
+  private final MemberRepository memberRepository;
+
+  private final TokenProvider tokenProvider;
 
     @Transactional
     public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
@@ -143,66 +151,85 @@ public class PostService {
                     "로그인이 필요합니다.");
         }
 
-        Member member = validateMember(request);
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
-        Post post = isPresentPost(id);
-        if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
-        }
 
-        if (post.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
-        }
-
-        post.update(requestDto);
-        return ResponseDto.success(post);
+    Member member = validateMember(request);
+    if (null == member) {
+      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
     }
 
-    @Transactional
-    public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = validateMember(request);
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-
-        Post post = isPresentPost(id);
-        if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
-        }
-
-        if (post.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제할 수 있습니다.");
-        }
-
-        postRepository.delete(post);
-        return ResponseDto.success("delete success");
+    Post post = isPresentPost(id);
+    if (null == post) {
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
     }
 
-    @Transactional(readOnly = true)
-    public Post isPresentPost(Long id) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        return optionalPost.orElse(null);
+    if (post.validateMember(member)) {
+      return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
     }
 
-    @Transactional
-    public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            return null;
-        }
-        return tokenProvider.getMemberFromAuthentication();
+    post.update(requestDto);
+    return ResponseDto.success(post);
+  }
+
+  @Transactional
+  public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+    if (null == request.getHeader("Refresh-Token")) {
+      return ResponseDto.fail("MEMBER_NOT_FOUND",
+          "로그인이 필요합니다.");
     }
+
+    if (null == request.getHeader("Authorization")) {
+      return ResponseDto.fail("MEMBER_NOT_FOUND",
+          "로그인이 필요합니다.");
+    }
+
+    Member member = validateMember(request);
+    if (null == member) {
+      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+    }
+
+    Post post = isPresentPost(id);
+    if (null == post) {
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+    }
+
+    if (post.validateMember(member)) {
+      return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제할 수 있습니다.");
+    }
+
+    postRepository.delete(post);
+    return ResponseDto.success("delete success");
+  }
+
+  @Transactional(readOnly = true)
+  public Post isPresentPost(Long id) {
+    Optional<Post> optionalPost = postRepository.findById(id);
+    return optionalPost.orElse(null);
+  }
+
+  @Transactional
+  public Member validateMember(HttpServletRequest request) {
+    if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+      return null;
+    }
+    return tokenProvider.getMemberFromAuthentication();
+  }
+
+
+  public void postLike(Long postId, String nickname) {
+    Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("aa"));
+    Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
+
+    PostLike a = postLikeRepository.findByPostAndMember(post, (java.lang.reflect.Member) member).orElse(null);
+
+
+    if (a == null) {
+      PostLike postLike = new PostLike(post, member);
+      postLikeRepository.save(postLike);
+    } else {
+      postLikeRepository.delete(a);
+    }
+
+  }
 
 }

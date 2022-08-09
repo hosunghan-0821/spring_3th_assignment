@@ -4,9 +4,11 @@ import com.example.spring_3th_assignment.Controller.request.PostRequestDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,5 +48,15 @@ public class PostController {
                                      HttpServletRequest request) {
         return postService.deletePost(id, request);
     }
+
+
+    @PostMapping("/api/post/{id}/like")
+    @PreAuthorize("isAuthenticated()")
+    public SuccessResponse<String> postLike(@PathVariable(name = "id") Long postId, Principal principal) {
+        postService.postLike(postId, principal.getName());
+
+        return SuccessResponse.success(null);
+    }
+
 
 }

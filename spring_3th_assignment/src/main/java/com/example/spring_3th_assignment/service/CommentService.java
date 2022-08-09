@@ -5,10 +5,13 @@ import com.example.spring_3th_assignment.Controller.request.CommentRequestDto;
 import com.example.spring_3th_assignment.Controller.response.CommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.domain.Comment;
+import com.example.spring_3th_assignment.domain.CommentLike;
 import com.example.spring_3th_assignment.domain.Member;
 import com.example.spring_3th_assignment.domain.Post;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
+import com.example.spring_3th_assignment.repository.CommentLikeRepository;
 import com.example.spring_3th_assignment.repository.CommentRepository;
+import com.example.spring_3th_assignment.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,11 @@ import java.util.Optional;
 public class CommentService {
 
   private final CommentRepository commentRepository;
+
+
+  private final CommentLikeRepository commentLikeRepository;
+
+  private final MemberRepository memberRepository;
 
   private final TokenProvider tokenProvider;
   private final PostService postService;
@@ -176,4 +184,27 @@ public class CommentService {
     }
     return tokenProvider.getMemberFromAuthentication();
   }
+
+  public void commentLike(Long commentId, String nickname) {
+    Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("aa"));
+    Member member = (Member) memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
+
+
+    CommentLike b = commentLikeRepository.findByCommentAndMember(comment, (java.lang.reflect.Member) member).orElse(null);
+    if (b == null) {
+      CommentLike commentLike = new CommentLike(comment, member);
+      commentLikeRepository.save(commentLike);
+    } else {
+      commentLikeRepository.delete(b);
+    }
+  }
+
+
+
+
+  private Comment getCommentInService(Long commentId) {
+    return null;
+  }
+
+
 }

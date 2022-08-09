@@ -8,8 +8,11 @@ import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.domain.Comment;
 import com.example.spring_3th_assignment.domain.Member;
 import com.example.spring_3th_assignment.domain.Post;
+import com.example.spring_3th_assignment.domain.PostLike;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
 import com.example.spring_3th_assignment.repository.CommentRepository;
+import com.example.spring_3th_assignment.repository.MemberRepository;
+import com.example.spring_3th_assignment.repository.PostLikeRepository;
 import com.example.spring_3th_assignment.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,11 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
+
+
+  private final PostLikeRepository postLikeRepository;
+
+  private final MemberRepository memberRepository;
 
   private final TokenProvider tokenProvider;
 
@@ -176,6 +184,23 @@ public class PostService {
       return null;
     }
     return tokenProvider.getMemberFromAuthentication();
+  }
+
+
+  public void postLike(Long postId, String nickname) {
+    Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("aa"));
+    Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
+
+    PostLike a = postLikeRepository.findByPostAndMember(post, (java.lang.reflect.Member) member).orElse(null);
+
+
+    if (a == null) {
+      PostLike postLike = new PostLike(post, member);
+      postLikeRepository.save(postLike);
+    } else {
+      postLikeRepository.delete(a);
+    }
+
   }
 
 }

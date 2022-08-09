@@ -8,7 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @Getter
@@ -34,6 +37,10 @@ public class Post extends Timestamped {
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
 
+
+  @Column(nullable = false)
+  private Long likeCount;
+
   public void update(PostRequestDto postRequestDto) {
     this.title = postRequestDto.getTitle();
     this.content = postRequestDto.getContent();
@@ -42,5 +49,19 @@ public class Post extends Timestamped {
   public boolean validateMember(Member member) {
     return !this.member.equals(member);
   }
+
+
+
+
+  @OneToMany(fetch = LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
+  private List<PostLike> postLikeList = new ArrayList<>();
+
+
+  public void mappingPostLike(PostLike postLike) {
+    this.postLikeList.add(postLike);
+  }
+
+
+
 
 }

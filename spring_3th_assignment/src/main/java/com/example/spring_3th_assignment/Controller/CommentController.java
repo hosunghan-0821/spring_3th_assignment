@@ -4,10 +4,12 @@ import com.example.spring_3th_assignment.Controller.request.CommentRequestDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 @Validated
 @RequiredArgsConstructor
@@ -37,5 +39,13 @@ public class CommentController {
     public ResponseDto<?> deleteComment(@PathVariable Long id,
                                         HttpServletRequest request) {
         return commentService.deleteComment(id, request);
+    }
+
+
+    @PostMapping("/api/comment/{id}//like")
+    @PreAuthorize("isAuthenticated()")
+    public SuccessResponse<String> commentLike(@PathVariable(name = "id") Long commentId, Principal principal) {
+        commentService.commentLike(commentId, principal.getName());
+        return SuccessResponse.success(null);
     }
 }

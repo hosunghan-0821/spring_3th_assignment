@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Getter
 @RequiredArgsConstructor
 public class S3UploaderService {
 
@@ -43,7 +45,7 @@ public class S3UploaderService {
     }
 
     //S3 업로드
-    private String putS3(File uploadFile, String fileName){
+    public String putS3(File uploadFile, String fileName){
         amazonS3Client.putObject(new PutObjectRequest(bucket,fileName,uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket,fileName).toString();
     }
@@ -61,9 +63,6 @@ public class S3UploaderService {
     //로컬에 파일 업로드하기
     private Optional<File> convert(MultipartFile file) throws IOException{
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-
-
-
         File convertFile = new File(System.getProperty("user.dir") + "/" +now+".jpg" );
 
         if(convertFile.createNewFile()){

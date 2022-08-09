@@ -29,13 +29,8 @@ public class Post extends Timestamped {
     private String content;
 
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,  cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comment;
-
-
-
-  @Column(nullable = false)
-  private Long likeCount;
 
   public void update(PostRequestDto postRequestDto) {
     this.title = postRequestDto.getTitle();
@@ -46,11 +41,7 @@ public class Post extends Timestamped {
     private List<ReComment> reComment;
 
 
-
-
-
-
-  @OneToMany(fetch = LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
   private List<PostLike> postLikeList = new ArrayList<>();
 
 

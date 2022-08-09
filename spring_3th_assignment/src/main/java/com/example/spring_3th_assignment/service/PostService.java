@@ -2,10 +2,7 @@ package com.example.spring_3th_assignment.service;
 
 
 import com.example.spring_3th_assignment.Controller.request.PostRequestDto;
-import com.example.spring_3th_assignment.Controller.response.CommentResponseDto;
-import com.example.spring_3th_assignment.Controller.response.PostResponseDto;
-import com.example.spring_3th_assignment.Controller.response.ReCommentResponseDto;
-import com.example.spring_3th_assignment.Controller.response.ResponseDto;
+import com.example.spring_3th_assignment.Controller.response.*;
 import com.example.spring_3th_assignment.domain.Comment;
 import com.example.spring_3th_assignment.domain.Member;
 import com.example.spring_3th_assignment.domain.Post;
@@ -133,9 +130,32 @@ public class PostService {
         );
     }
 
-    @Transactional(readOnly = true)
+
     public ResponseDto<?> getAllPost() {
-        return ResponseDto.success(postRepository.findAllByOrderByModifiedAtDesc());
+
+        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+        List<AllPostResponseDto> allPostResponseDtoList = new ArrayList<>();
+
+
+        for(Post post : postList) {
+
+            Member member = memberRepository.findById(post.getMember().getId()).orElse(null);
+            List<PostLike> postLikeList = postLikeRepository.findByPost(post);
+
+            AllPostResponseDto allPostResponseDto=AllPostResponseDto.builder()
+                    .content(post.getContent())
+                    .id(post.getId())
+                    .author(member.getNickname())
+                    .createdAt(post.getCreatedAt())
+                    .modifiedAt(post.getModifiedAt())
+                    .title(post.getTitle())
+                    .postLikeNum(Integer.toString(postLikeList.size()))
+                    .build();
+            allPostResponseDtoList.add(allPostResponseDto);
+        }
+        return ResponseDto.success(allPostResponseDtoList);
+
+
 
     }
 
@@ -220,7 +240,7 @@ public class PostService {
     Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("aa"));
     Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
 
-    PostLike a = postLikeRepository.findByPostAndMember(post, (java.lang.reflect.Member) member).orElse(null);
+    PostLike a = postLikeRepository.findByPostAndMember(post, member).orElse(null);
 
 
     if (a == null) {

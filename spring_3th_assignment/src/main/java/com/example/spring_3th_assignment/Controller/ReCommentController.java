@@ -17,11 +17,10 @@ public class ReCommentController {
 
     private final ReCommentService reCommentService;
 
-    // 생성
+    // 생성 / 로그인 필요
     @RequestMapping(value = "/api/auth/recomment", method = RequestMethod.POST)
     public ResponseDto<?> createReComment(@RequestBody ReCommentRequestDto requestDto,
                                         HttpServletRequest request) {
-        System.out.println("컨트롤러에서 이제 서비스로 넘어감 "+requestDto);
         return reCommentService.createReComment(requestDto, request);
     }
 
@@ -31,14 +30,14 @@ public class ReCommentController {
         return reCommentService.getAllReCommentByComment(commentId);
     }
 
-    // 수정
+    // 수정 / 로그인 필요
     @RequestMapping(value = "/api/auth/recomment/{commentId}", method = RequestMethod.PUT)
     public ResponseDto<?> updateSubComment(@PathVariable Long commentId, @RequestBody ReCommentRequestDto RequestDto,
                                            HttpServletRequest request) {
         return reCommentService.updateReComment(commentId, RequestDto, request);
     }
 
-    // 삭제
+    // 삭제 / 로그인 필요
     @RequestMapping(value = "/api/auth/recomment/{commentId}", method = RequestMethod.DELETE)
     public ResponseDto<?> deleteComment(@PathVariable Long commentId,
                                         HttpServletRequest request) {

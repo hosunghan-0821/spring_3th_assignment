@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ReCommentRepository extends JpaRepository<ReComment, Long> {
     List<ReComment> findByMemberId(Long member_id);
+    List<ReComment> findAllByCommentId(Long comment_id);
     List<ReComment> findAllByComment(Comment comment);
 
 

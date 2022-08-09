@@ -1,6 +1,5 @@
 package com.example.spring_3th_assignment.domain;
 
-import com.example.spring_3th_assignment.Controller.request.CommentRequestDto;
 import com.example.spring_3th_assignment.Controller.request.ReCommentRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

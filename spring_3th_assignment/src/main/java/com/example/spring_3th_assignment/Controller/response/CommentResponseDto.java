@@ -1,12 +1,12 @@
 package com.example.spring_3th_assignment.Controller.response;
 
-import com.example.spring_3th_assignment.domain.ReComment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -19,5 +19,5 @@ public class CommentResponseDto {
   private String content;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;
-  private ReComment reComment;
+  private List<ReCommentResponseDto> reCommentResponseDtoList;
 }

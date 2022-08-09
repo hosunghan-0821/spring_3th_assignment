@@ -1,9 +1,6 @@
 package com.example.spring_3th_assignment.service;
 
-
-import com.example.spring_3th_assignment.Controller.request.CommentRequestDto;
 import com.example.spring_3th_assignment.Controller.request.ReCommentRequestDto;
-import com.example.spring_3th_assignment.Controller.response.CommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ReCommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.domain.Comment;
@@ -11,7 +8,6 @@ import com.example.spring_3th_assignment.domain.Member;
 import com.example.spring_3th_assignment.domain.Post;
 import com.example.spring_3th_assignment.domain.ReComment;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
-import com.example.spring_3th_assignment.repository.CommentRepository;
 import com.example.spring_3th_assignment.repository.ReCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,16 +20,17 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+public class ReCommentService {
 
-    private final CommentRepository commentRepository;
     private final ReCommentRepository reCommentRepository;
+    private final CommentService commentService;
     private final TokenProvider tokenProvider;
     private final PostService postService;
 
+
     // 생성
     @Transactional
-    public ResponseDto<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> createReComment(ReCommentRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -49,78 +46,65 @@ public class CommentService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
+        Comment comment = commentService.isPresentComment(requestDto.getCommentId());
+        if (null == comment) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 코멘트 id 입니다.");
+        }
+
         Post post = postService.isPresentPost(requestDto.getPostId());
         if (null == post) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
         }
 
-        Comment comment = Comment.builder()
+        ReComment recomment = ReComment.builder()
                 .member(member)
                 .post(post)
+                .comment(comment)
                 .content(requestDto.getContent())
                 .build();
-        commentRepository.save(comment);
+        reCommentRepository.save(recomment);
         return ResponseDto.success(
-                CommentResponseDto.builder()
-                        .postId(comment.getPost().getId())
-                        .commentId(comment.getId())
-                        .author(comment.getMember().getNickname())
-                        .content(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
-                        .modifiedAt(comment.getModifiedAt())
+                ReCommentResponseDto.builder()
+                        .commentId(requestDto.getCommentId())
+                        .reCommentId(recomment.getId())
+                        .author(recomment.getMember().getNickname())
+                        .content(recomment.getContent())
+                        .createdAt(recomment.getCreatedAt())
+                        .modifiedAt(recomment.getModifiedAt())
                         .build()
         );
     }
 
-    // 조회
+    // 대댓글 조회
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllCommentsByPost(Long postId) {
-        Post post = postService.isPresentPost(postId);
-        if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+    public ResponseDto<?> getAllReCommentByComment(Long commentId) {
+        Comment comment = commentService.isPresentComment(commentId);
+        if (null == comment) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
         }
 
-        List<Comment> commentList = commentRepository.findAllByPost(post);
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        List<ReComment> reCommentList = reCommentRepository.findAllByCommentId(commentId);
+        List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
 
-
-        for (Comment comment : commentList) {
-            List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
-            List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
-            for (ReComment reComment : reCommentList) {
-                reCommentResponseDtoList.add(
-                        ReCommentResponseDto.builder()
-                                .commentId(reComment.getComment().getId())
-                                .reCommentId(reComment.getId())
-                                .author(reComment.getMember().getNickname())
-                                .content(reComment.getContent())
-                                .createdAt(reComment.getCreatedAt())
-                                .modifiedAt(reComment.getModifiedAt())
-                                .build()
-                );
-            }
-
-            commentResponseDtoList.add(
-                    CommentResponseDto.builder()
-                            .postId(comment.getPost().getId())
-                            .commentId(comment.getId())
-                            .author(comment.getMember().getNickname())
-                            .content(comment.getContent())
-                            .createdAt(comment.getCreatedAt())
-                            .modifiedAt(comment.getModifiedAt())
-                            .reCommentResponseDtoList(reCommentResponseDtoList)
+        for (ReComment reComment : reCommentList) {
+            reCommentResponseDtoList.add(
+                    ReCommentResponseDto.builder()
+                            .commentId(reComment.getComment().getId())
+                            .reCommentId(reComment.getId())
+                            .author(reComment.getMember().getNickname())
+                            .content(reComment.getContent())
+                            .createdAt(reComment.getCreatedAt())
+                            .modifiedAt(reComment.getModifiedAt())
                             .build()
             );
         }
-
-
-        return ResponseDto.success(commentResponseDtoList);
+        return ResponseDto.success(reCommentResponseDtoList);
     }
 
 
     // 수정
     @Transactional
-    public ResponseDto<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> updateReComment(Long id, ReCommentRequestDto reCommentRequestDto, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -136,35 +120,36 @@ public class CommentService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Post post = postService.isPresentPost(requestDto.getPostId());
-        if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
-        }
-
-        Comment comment = isPresentComment(id);
+        Comment comment = commentService.isPresentComment(id);
         if (null == comment) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
         }
 
-        if (comment.validateMember(member)) {
+        ReComment reComment = isPresentReComment(id);
+        if (null == reComment) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 대댓글 id 입니다.");
+        }
+
+        if (reComment.validateMember(member)) {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
 
-        comment.update(requestDto);
+        reComment.update(reCommentRequestDto);
         return ResponseDto.success(
-                CommentResponseDto.builder()
-                        .postId(comment.getPost().getId())
-                        .commentId(comment.getId())
-                        .author(comment.getMember().getNickname())
-                        .content(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
-                        .modifiedAt(comment.getModifiedAt())
+                ReCommentResponseDto.builder()
+                        .commentId(reComment.getComment().getId())
+                        .reCommentId(reComment.getId())
+                        .author(reComment.getMember().getNickname())
+                        .content(reComment.getContent())
+                        .createdAt(reComment.getCreatedAt())
+                        .modifiedAt(reComment.getModifiedAt())
                         .build()
         );
     }
 
+    // 삭제
     @Transactional
-    public ResponseDto<?> deleteComment(Long id, HttpServletRequest request) {
+    public ResponseDto<?> deleteReComment(Long id, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -180,26 +165,28 @@ public class CommentService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Comment comment = isPresentComment(id);
-        if (null == comment) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
+        ReComment reComment = isPresentReComment(id);
+        if (null == reComment) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 대댓글 id 입니다.");
         }
 
-        if (comment.validateMember(member)) {
+        if (reComment.validateMember(member)) {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
 
-        commentRepository.delete(comment);
+        reCommentRepository.delete(reComment);
         return ResponseDto.success("success");
     }
 
 
+    // 댓글 id 확인?
     @Transactional(readOnly = true)
-    public Comment isPresentComment(Long id) {
-        Optional<Comment> optionalComment = commentRepository.findById(id);
-        return optionalComment.orElse(null);
+    public ReComment isPresentReComment(Long id) {
+        Optional<ReComment> optionalSubComment = reCommentRepository.findById(id);
+        return optionalSubComment.orElse(null);
     }
 
+    //토큰 확인?
     @Transactional
     public Member validateMember(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {

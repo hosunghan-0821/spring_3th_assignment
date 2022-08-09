@@ -23,7 +23,7 @@ public class CommentController {
         return commentService.createComment(requestDto, request);
     }
 
-    // 댓글 조회
+    // 댓글 조회 // 아이디는 포스틑 아이디
     @RequestMapping(value = "/api/comment/{id}", method = RequestMethod.GET)
     public ResponseDto<?> getAllComments(@PathVariable Long id) {
         return commentService.getAllCommentsByPost(id);

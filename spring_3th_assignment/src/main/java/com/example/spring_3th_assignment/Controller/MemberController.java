@@ -4,7 +4,6 @@ import com.example.spring_3th_assignment.Controller.request.LoginRequestDto;
 import com.example.spring_3th_assignment.Controller.request.MemberRequestDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.service.MemberService;
-//import com.example.spring_3th_assignment.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +28,6 @@ public class MemberController {
     ) {
         return memberService.login(requestDto, response);
     }
-
-//  @RequestMapping(value = "/api/auth/member/reissue", method = RequestMethod.POST)
-//  public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-//    return memberService.reissue(request, response);
-//  }
 
     @RequestMapping(value = "/api/auth/member/logout", method = RequestMethod.POST)
     public ResponseDto<?> logout(HttpServletRequest request) {

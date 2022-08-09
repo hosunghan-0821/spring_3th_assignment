@@ -106,7 +106,7 @@ public class PostService {
                             .content(comment.getContent())
                             .createdAt(comment.getCreatedAt())
                             .modifiedAt(comment.getModifiedAt())
-                            .reComment(comment.getReComment())
+                            .reCommentResponseDtoList(reCommentResponseDtoList)
                             .build()
             );
         }

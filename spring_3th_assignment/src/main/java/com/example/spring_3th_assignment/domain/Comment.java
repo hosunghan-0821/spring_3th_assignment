@@ -29,6 +29,9 @@ public class Comment extends Timestamped {
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private Post post;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  private ReComment reComment;
+
   @Column(nullable = false)
   private String content;
 

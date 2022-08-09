@@ -16,6 +16,7 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 @Getter
+@AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
   private Member member;
@@ -28,6 +29,15 @@ public class UserDetailsImpl implements UserDetails {
     authorities.add(authority);
     return authorities;
   }
+
+  public Member getMember() {
+    return member;
+  }
+
+  public Long getId() {
+    return member.getId();
+  }
+
 
   @Override
   public String getPassword() {

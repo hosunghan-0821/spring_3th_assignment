@@ -15,34 +15,38 @@ import java.util.List;
 @Setter
 public class Post extends Timestamped {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false)
-  private String title;
+    @Column(nullable = false)
+    private String title;
 
-  @Column(nullable = false)
-  private String content;
+    @Column(nullable = false)
+    private String content;
 
 
-  @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Comment> comments;
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comment;
 
-  @JoinColumn(name = "member_id", nullable = false)
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Member member;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReComment> reComment;
 
-  @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade =CascadeType.ALL)
-  private List<Image> images;
 
-  public void update(PostRequestDto postRequestDto) {
-    this.title = postRequestDto.getTitle();
-    this.content = postRequestDto.getContent();
-  }
+    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
-  public boolean validateMember(Member member) {
-    return !this.member.equals(member);
-  }
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Image> images;
 
+
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 }

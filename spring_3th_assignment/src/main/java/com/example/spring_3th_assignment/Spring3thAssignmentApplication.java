@@ -11,5 +11,4 @@ public class Spring3thAssignmentApplication {
     public static void main(String[] args) {
         SpringApplication.run(Spring3thAssignmentApplication.class, args);
     }
-
 }

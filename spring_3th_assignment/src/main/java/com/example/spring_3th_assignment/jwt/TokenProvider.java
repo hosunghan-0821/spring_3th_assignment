@@ -58,6 +58,7 @@ public class TokenProvider {
         .compact();
 
     String refreshToken = Jwts.builder()
+        .setSubject(String.valueOf(member.getId())) // 추가한 부분
         .setExpiration(new Date(now + REFRESH_TOKEN_EXPRIRE_TIME))
         .signWith(key, SignatureAlgorithm.HS256)
         .compact();

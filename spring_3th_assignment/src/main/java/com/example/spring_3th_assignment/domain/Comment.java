@@ -28,6 +28,9 @@ public class Comment extends Timestamped {
   @ManyToOne(fetch = FetchType.LAZY)
   private Post post;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  private ReComment reComment;
+
   @Column(nullable = false)
   private String content;
 

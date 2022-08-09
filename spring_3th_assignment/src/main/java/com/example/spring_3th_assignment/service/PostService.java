@@ -6,10 +6,12 @@ import com.example.spring_3th_assignment.Controller.response.CommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.PostResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.domain.Comment;
+import com.example.spring_3th_assignment.domain.Image;
 import com.example.spring_3th_assignment.domain.Member;
 import com.example.spring_3th_assignment.domain.Post;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
 import com.example.spring_3th_assignment.repository.CommentRepository;
+import com.example.spring_3th_assignment.repository.ImageRepository;
 import com.example.spring_3th_assignment.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
+
+  private final ImageRepository imageRepository;
 
   private final TokenProvider tokenProvider;
 
@@ -46,20 +50,27 @@ public class PostService {
       return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
     }
 
+    //post 저장
     Post post = Post.builder()
         .title(requestDto.getTitle())
         .content(requestDto.getContent())
         .member(member)
         .build();
-    postRepository.save(post);
+    Post savedPost = postRepository.save(post);
+
+    //저장한 post를 통해서 이미지 저장
+    Image image =imageRepository.save(new Image(savedPost,requestDto.getImageUrl()));
+
+
     return ResponseDto.success(
         PostResponseDto.builder()
-            .id(post.getId())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .author(post.getMember().getNickname())
-            .createdAt(post.getCreatedAt())
-            .modifiedAt(post.getModifiedAt())
+            .id(savedPost.getId())
+            .title(savedPost.getTitle())
+            .content(savedPost.getContent())
+            .imageUrl(image.getImgURL())
+            .author(savedPost.getMember().getNickname())
+            .createdAt(savedPost.getCreatedAt())
+            .modifiedAt(savedPost.getModifiedAt())
             .build()
     );
   }

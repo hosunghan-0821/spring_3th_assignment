@@ -13,9 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
+
   private Long id;
   private String title;
   private String content;
+  private String imageUrl;
   private String author;
   private List<CommentResponseDto> commentResponseDtoList;
   private LocalDateTime createdAt;

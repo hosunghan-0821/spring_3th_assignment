@@ -33,34 +33,24 @@ public class Post extends Timestamped {
     private List<Comment> comment;
 
 
+    @Column(nullable = true)
+    private Long likeCount;
 
-  @Column(nullable = false)
-  private Long likeCount;
-
-  public void update(PostRequestDto postRequestDto) {
-    this.title = postRequestDto.getTitle();
-    this.content = postRequestDto.getContent();
-  }
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+    }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReComment> reComment;
 
+    @OneToMany(fetch = LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostLike> postLikeList = new ArrayList<>();
 
 
-
-
-
-  @OneToMany(fetch = LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
-  private List<PostLike> postLikeList = new ArrayList<>();
-
-
-  public void mappingPostLike(PostLike postLike) {
-    this.postLikeList.add(postLike);
-  }
-
-
-
-
+    public void mappingPostLike(PostLike postLike) {
+        this.postLikeList.add(postLike);
+    }
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)

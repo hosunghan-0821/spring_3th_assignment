@@ -49,7 +49,7 @@ public class PostController {
         return postService.deletePost(id, request);
     }
 
-
+    // 포스트 좋아요
     @PostMapping("/api/post/{id}/like")
     @PreAuthorize("isAuthenticated()")
     public SuccessResponse<String> postLike(@PathVariable(name = "id") Long postId, Principal principal) {

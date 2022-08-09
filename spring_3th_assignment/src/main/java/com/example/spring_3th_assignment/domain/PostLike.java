@@ -22,6 +22,7 @@ public class PostLike {
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_PostLike_User"))
     private Member member;
 
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_PostLike_Post"))
     private Post post;

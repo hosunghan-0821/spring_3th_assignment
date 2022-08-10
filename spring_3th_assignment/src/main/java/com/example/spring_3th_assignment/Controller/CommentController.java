@@ -25,7 +25,7 @@ public class CommentController {
         return commentService.createComment(requestDto, request);
     }
 
-    // 댓글 조회 // 아이디는 포스틑 아이디
+    // 댓글 조회 // 아이디는 포스트 아이디
     @RequestMapping(value = "/api/comment/{id}", method = RequestMethod.GET)
     public ResponseDto<?> getAllComments(@PathVariable Long id) {
         return commentService.getAllCommentsByPost(id);
@@ -46,7 +46,8 @@ public class CommentController {
     }
 
 
-    @PostMapping("/api/comment/{id}//like")
+    // 코멘트 좋아효
+    @PostMapping("/api/comment/{id}/like")
     @PreAuthorize("isAuthenticated()")
     public SuccessResponse<String> commentLike(@PathVariable(name = "id") Long commentId, Principal principal) {
         commentService.commentLike(commentId, principal.getName());

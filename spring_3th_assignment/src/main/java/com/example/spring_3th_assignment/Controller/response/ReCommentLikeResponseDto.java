@@ -6,19 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentResponseDto {
-    private Long postId;
+public class ReCommentLikeResponseDto {
     private Long commentId;
+    private Long reCommentId;
     private String author;
     private String content;
-    private Long commentLike;
+    private Long reCommentLike;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private List<ReCommentResponseDto> reCommentResponseDtoList;
 }

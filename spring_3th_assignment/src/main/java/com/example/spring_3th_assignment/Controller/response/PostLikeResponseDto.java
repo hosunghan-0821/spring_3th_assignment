@@ -12,13 +12,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentResponseDto {
-    private Long postId;
-    private Long commentId;
-    private String author;
+public class PostLikeResponseDto {
+
+    private Long id;
+    private String title;
     private String content;
-    private Long commentLike;
+    private String imageUrl;
+    private String author;
+    private Long postLike;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private List<ReCommentResponseDto> reCommentResponseDtoList;
 }

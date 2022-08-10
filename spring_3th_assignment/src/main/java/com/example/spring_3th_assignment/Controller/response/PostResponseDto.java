@@ -20,8 +20,7 @@ public class PostResponseDto {
     private String imageUrl;
     private String author;
     private Long postLike;
-    private List<CommentResponseDto> commentResponseDtoList;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<CommentResponseDto> commentResponseDtoList;
 }
-//1

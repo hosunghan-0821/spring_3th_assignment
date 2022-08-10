@@ -26,11 +26,13 @@ public class PostService {
 
     private final PostLikeRepository postLikeRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final ReCommentLikeRepository reCommentLikeRepository;
 
     private final MemberRepository memberRepository;
 
     private final TokenProvider tokenProvider;
 
+    // 게시글 생성
     @Transactional
     public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
@@ -66,6 +68,7 @@ public class PostService {
         );
     }
 
+    // 게시글 일부 조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getPost(Long id) {
         Post post = isPresentPost(id);
@@ -87,12 +90,14 @@ public class PostService {
             List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
             List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
             for (ReComment reComment : reCommentList) {
+                List<ReCommentLike> reCommentLikeList = reCommentLikeRepository.findByReComment(reComment);
                 reCommentResponseDtoList.add(
                         ReCommentResponseDto.builder()
                                 .commentId(reComment.getComment().getId())
                                 .reCommentId(reComment.getId())
                                 .author(reComment.getMember().getNickname())
                                 .content(reComment.getContent())
+                                .reCommentLike((long) reCommentLikeList.size())
                                 .createdAt(reComment.getCreatedAt())
                                 .modifiedAt(reComment.getModifiedAt())
                                 .build()
@@ -105,7 +110,7 @@ public class PostService {
                             .commentId(comment.getId())
                             .author(comment.getMember().getNickname())
                             .content(comment.getContent())
-                            .commentLike((long) commentLikeList.size()) // 호성님이 만든부분 이태민 수정함
+                            .commentLike((long) commentLikeList.size())
                             .createdAt(comment.getCreatedAt())
                             .modifiedAt(comment.getModifiedAt())
                             .reCommentResponseDtoList(reCommentResponseDtoList)
@@ -128,6 +133,7 @@ public class PostService {
     }
 
 
+    // 게시글 전체 조회
     public ResponseDto<?> getAllPost() {
         List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
         List<AllPostResponseDto> allPostResponseDtoList = new ArrayList<>();
@@ -150,6 +156,7 @@ public class PostService {
         return ResponseDto.success(allPostResponseDtoList);
     }
 
+    // 게시글 수정
     @Transactional
     public ResponseDto<Post> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
@@ -178,6 +185,7 @@ public class PostService {
         return ResponseDto.success(post);
     }
 
+    // 게시글 삭제
     @Transactional
     public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
@@ -224,6 +232,7 @@ public class PostService {
     }
 
 
+    // 게시글 좋아요
     public void postLike(Long postId, String nickname) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("aa"));
         Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));

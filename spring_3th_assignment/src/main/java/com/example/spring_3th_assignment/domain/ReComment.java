@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @Getter
@@ -33,6 +37,27 @@ public class ReComment extends Timestamped {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private long likeCount;
+
+
+    @OneToMany(fetch = LAZY, mappedBy = "reComment", cascade = CascadeType.REMOVE)
+    private List<ReCommentLike> reCommentLikeList = new ArrayList<>();
+
+    public void mappingCommentLike(ReCommentLike reCommentLike) {
+        this.reCommentLikeList.add(reCommentLike);
+    }
+
+    public void updateLikeCount() {
+        this.likeCount = (long) this.reCommentLikeList.size();
+    }
+
+    public void discountLike(ReCommentLike reCommentLike) {
+        this.reCommentLikeList.remove(reCommentLike);
+
+    }
+
 
     public void update(ReCommentRequestDto reCommentRequestDto) {
         this.content = reCommentRequestDto.getContent();

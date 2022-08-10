@@ -7,10 +7,7 @@ import com.example.spring_3th_assignment.Controller.response.ReCommentResponseDt
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
 import com.example.spring_3th_assignment.domain.*;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
-import com.example.spring_3th_assignment.repository.CommentLikeRepository;
-import com.example.spring_3th_assignment.repository.CommentRepository;
-import com.example.spring_3th_assignment.repository.MemberRepository;
-import com.example.spring_3th_assignment.repository.ReCommentRepository;
+import com.example.spring_3th_assignment.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,10 +29,11 @@ public class CommentService {
 
 
   private final CommentLikeRepository commentLikeRepository;
+    private final ReCommentLikeRepository reCommentLikeRepository;
 
   private final MemberRepository memberRepository;
 
-    // 생성
+    // 댓글 생성
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
@@ -76,7 +74,7 @@ public class CommentService {
         );
     }
 
-    // 조회
+    // 댓글 조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllCommentsByPost(Long postId) {
         Post post = postService.isPresentPost(postId);
@@ -93,12 +91,14 @@ public class CommentService {
             List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
             List<CommentLike> commentLikeList = commentLikeRepository.findByComment(comment);
             for (ReComment reComment : reCommentList) {
+                List<ReCommentLike> reCommentLikeList = reCommentLikeRepository.findByReComment(reComment);
                 reCommentResponseDtoList.add(
                         ReCommentResponseDto.builder()
                                 .commentId(reComment.getComment().getId())
                                 .reCommentId(reComment.getId())
                                 .author(reComment.getMember().getNickname())
                                 .content(reComment.getContent())
+                                .reCommentLike((long) reCommentLikeList.size())
                                 .createdAt(reComment.getCreatedAt())
                                 .modifiedAt(reComment.getModifiedAt())
                                 .build()
@@ -212,9 +212,7 @@ public class CommentService {
 
   public void commentLike(Long commentId, String nickname) {
     Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("aa"));
-    Member member = (Member) memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
-
-
+    Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
     CommentLike b = commentLikeRepository.findByCommentAndMember(comment,member).orElse(null);
     if (b == null) {
       CommentLike commentLike = new CommentLike(comment, member);

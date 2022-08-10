@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentLikeResponseDto {
-    private Long postId;
+public class ReCommentLikeResponseDto {
     private Long commentId;
+    private Long reCommentId;
     private String author;
     private String content;
-    private Long commentLike;
+    private Long reCommentLike;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

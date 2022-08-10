@@ -215,10 +215,10 @@ public class CommentService {
 
   public void commentLike(Long commentId, String nickname) {
     Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("aa"));
-    Member member = (Member) memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
+    Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
 
 
-    CommentLike b = commentLikeRepository.findByCommentAndMember(comment, (java.lang.reflect.Member) member).orElse(null);
+    CommentLike b = commentLikeRepository.findByCommentAndMember(comment,  member).orElse(null);
     if (b == null) {
       CommentLike commentLike = new CommentLike(comment, member);
       commentLikeRepository.save(commentLike);

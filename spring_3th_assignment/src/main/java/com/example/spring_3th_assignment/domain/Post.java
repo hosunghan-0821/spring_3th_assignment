@@ -8,8 +8,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Builder
 @Getter
 @NoArgsConstructor
@@ -44,9 +42,9 @@ public class Post extends Timestamped {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReComment> reComment;
 
-    @OneToMany(fetch = LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<PostLike> postLikeList = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostLike> postLikeList = new ArrayList<>();
 
     public void mappingPostLike(PostLike postLike) {
         this.postLikeList.add(postLike);

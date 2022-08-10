@@ -2,15 +2,10 @@ package com.example.spring_3th_assignment.service;
 
 
 import com.example.spring_3th_assignment.Controller.request.CommentRequestDto;
-import com.example.spring_3th_assignment.Controller.request.ReCommentRequestDto;
 import com.example.spring_3th_assignment.Controller.response.CommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ReCommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
-import com.example.spring_3th_assignment.domain.Comment;
-import com.example.spring_3th_assignment.domain.CommentLike;
-import com.example.spring_3th_assignment.domain.Member;
-import com.example.spring_3th_assignment.domain.Post;
-import com.example.spring_3th_assignment.domain.ReComment;
+import com.example.spring_3th_assignment.domain.*;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
 import com.example.spring_3th_assignment.repository.CommentLikeRepository;
 import com.example.spring_3th_assignment.repository.CommentRepository;
@@ -96,6 +91,7 @@ public class CommentService {
         for (Comment comment : commentList) {
             List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
             List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
+            List<CommentLike> commentLikeList = commentLikeRepository.findByComment(comment);
             for (ReComment reComment : reCommentList) {
                 reCommentResponseDtoList.add(
                         ReCommentResponseDto.builder()
@@ -115,6 +111,7 @@ public class CommentService {
                             .commentId(comment.getId())
                             .author(comment.getMember().getNickname())
                             .content(comment.getContent())
+                            .commentLike((long) commentLikeList.size())
                             .createdAt(comment.getCreatedAt())
                             .modifiedAt(comment.getModifiedAt())
                             .reCommentResponseDtoList(reCommentResponseDtoList)
@@ -218,7 +215,7 @@ public class CommentService {
     Member member = (Member) memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
 
 
-    CommentLike b = commentLikeRepository.findByCommentAndMember(comment, (java.lang.reflect.Member) member).orElse(null);
+    CommentLike b = commentLikeRepository.findByCommentAndMember(comment,member).orElse(null);
     if (b == null) {
       CommentLike commentLike = new CommentLike(comment, member);
       commentLikeRepository.save(commentLike);

@@ -19,6 +19,8 @@ public class MyPageService {
 
     private final CommentRepository commentRepository;
     private final ReCommentRepository reCommentRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
     private final TokenProvider tokenProvider;
 
@@ -32,7 +34,10 @@ public class MyPageService {
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         List<ReComment> reCommentList = reCommentRepository.findByMemberId(member.getId());
         List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
-
+        List<PostLike> postLikeList = postLikeRepository.findByMemberId(member.getId());
+        List<PostLikeResponseDto> postLikeResponseDtoList = new ArrayList<>();
+        List<CommentLike> commentLikeList = commentLikeRepository.findByMemberId(member.getId());
+        List<CommentLikeResponseDto> commentLikeResponseDtoList = new ArrayList<>();
         // 멤버가 작성한 게시글 가지고 오기
         for (Post post : postList) {
             postResponseDtoList.add(
@@ -40,6 +45,7 @@ public class MyPageService {
                             .id(post.getId())
                             .title(post.getTitle())
                             .author(post.getMember().getNickname())
+                            .postLike((long) postLikeList.size())
                             .content(post.getContent())
                             .createdAt(post.getCreatedAt())
                             .modifiedAt(post.getModifiedAt())
@@ -53,6 +59,7 @@ public class MyPageService {
                             .postId(comment.getPost().getId())
                             .commentId(comment.getId())
                             .author(comment.getMember().getNickname())
+                            .commentLike((long) commentLikeList.size())
                             .content(comment.getContent())
                             .createdAt(comment.getCreatedAt())
                             .modifiedAt(comment.getModifiedAt())
@@ -72,14 +79,60 @@ public class MyPageService {
                             .build()
             );
         }
+        // 멤버가 좋아요한 게시글 가지고 오기
+        for (PostLike postLike : postLikeList) {
+            postLikeResponseDtoList.add(
+                    PostLikeResponseDto.builder()
+                            .id(postLike.getPost().getId())
+                            .title(postLike.getPost().getTitle())
+                            .author(postLike.getMember().getNickname())
+                            .postLike((long) postLike.getPost().getPostLikeList().size())
+                            .content(postLike.getPost().getContent())
+                            .createdAt(postLike.getPost().getCreatedAt())
+                            .modifiedAt(postLike.getPost().getModifiedAt())
+                            .build()
+            );
+        }
+
+        // 멤버가 좋아요한 댓글 가지고 오기
+        for (CommentLike commentLike : commentLikeList) {
+            commentLikeResponseDtoList.add(
+                    CommentLikeResponseDto.builder()
+                            .postId(commentLike.getComment().getPost().getId())
+                            .commentId(commentLike.getComment().getId())
+                            .author(commentLike.getMember().getNickname())
+                            .commentLike((long) commentLike.getComment().getCommentLikeList().size())
+                            .content(commentLike.getComment().getContent())
+                            .createdAt(commentLike.getComment().getCreatedAt())
+                            .modifiedAt(commentLike.getComment().getModifiedAt())
+                            .build()
+            );
+        }
+
+//        // 멤버가 좋아요한 대댓글 가지고 오기
+//        for (CommentLike commentLike : commentLikeList) {
+//            commentLikeResponseDtoList.add(
+//                    CommentLikeResponseDto.builder()
+//                            .postId(commentLike.getComment().getPost().getId())
+//                            .commentId(commentLike.getComment().getId())
+//                            .author(commentLike.getMember().getNickname())
+//                            .content(commentLike.getComment().getContent())
+//                            .createdAt(commentLike.getComment().getCreatedAt())
+//                            .modifiedAt(commentLike.getComment().getModifiedAt())
+//                            .build()
+//            );
+//        }
+
         // 최종 DTO 만들고 리턴하기
         return ResponseDto.success(
                 MyPageResponseDto.builder()
                         .id(member.getId())
                         .nickname(member.getNickname())
-                        .postResponseDtoList(postResponseDtoList)
-                        .commentResponseDtoList(commentResponseDtoList)
-                        .reCommentResponseDtoList(reCommentResponseDtoList)
+                        .postList(postResponseDtoList)
+                        .commentList(commentResponseDtoList)
+                        .reCommentList(reCommentResponseDtoList)
+                        .postLikeList(postLikeResponseDtoList)
+                        .commentLikeList(commentLikeResponseDtoList)
                         .build()
         );
     }

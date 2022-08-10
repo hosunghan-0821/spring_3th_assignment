@@ -5,11 +5,7 @@ import com.example.spring_3th_assignment.Controller.request.PostRequestDto;
 import com.example.spring_3th_assignment.Controller.response.*;
 import com.example.spring_3th_assignment.domain.*;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
-import com.example.spring_3th_assignment.repository.CommentRepository;
-import com.example.spring_3th_assignment.repository.MemberRepository;
-import com.example.spring_3th_assignment.repository.PostLikeRepository;
-import com.example.spring_3th_assignment.repository.PostRepository;
-import com.example.spring_3th_assignment.repository.ReCommentRepository;
+import com.example.spring_3th_assignment.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +25,7 @@ public class PostService {
 
 
     private final PostLikeRepository postLikeRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     private final MemberRepository memberRepository;
 
@@ -86,6 +83,7 @@ public class PostService {
         Long likeCount = (long) postLikeList.size();
 
         for (Comment comment : commentList) {
+            List<CommentLike> commentLikeList = commentLikeRepository.findByComment(comment);
             List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
             List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
             for (ReComment reComment : reCommentList) {
@@ -107,14 +105,13 @@ public class PostService {
                             .commentId(comment.getId())
                             .author(comment.getMember().getNickname())
                             .content(comment.getContent())
+                            .commentLike((long) commentLikeList.size()) // 호성님이 만든부분 이태민 수정함
                             .createdAt(comment.getCreatedAt())
                             .modifiedAt(comment.getModifiedAt())
                             .reCommentResponseDtoList(reCommentResponseDtoList)
                             .build()
             );
         }
-
-
 
         return ResponseDto.success(
                 PostResponseDto.builder()
@@ -130,10 +127,27 @@ public class PostService {
         );
     }
 
-    @Transactional(readOnly = true)
+
     public ResponseDto<?> getAllPost() {
-        return ResponseDto.success(postRepository.findAllByOrderByModifiedAtDesc());
-        //
+        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+        List<AllPostResponseDto> allPostResponseDtoList = new ArrayList<>();
+
+        for (Post post : postList) {
+            Member member = memberRepository.findById(post.getMember().getId()).orElse(null);
+            List<PostLike> postLikeList = postLikeRepository.findByPost(post);
+
+            AllPostResponseDto allPostResponseDto = AllPostResponseDto.builder()
+                    .content(post.getContent())
+                    .id(post.getId())
+                    .author(member.getNickname())
+                    .createdAt(post.getCreatedAt())
+                    .modifiedAt(post.getModifiedAt())
+                    .title(post.getTitle())
+                    .postLikeNum(Integer.toString(postLikeList.size()))
+                    .build();
+            allPostResponseDtoList.add(allPostResponseDto);
+        }
+        return ResponseDto.success(allPostResponseDtoList);
     }
 
     @Transactional
@@ -142,13 +156,10 @@ public class PostService {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
-
         if (null == request.getHeader("Authorization")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
-
-
         Member member = validateMember(request);
         if (null == member) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
@@ -202,6 +213,7 @@ public class PostService {
         Optional<Post> optionalPost = postRepository.findById(id);
         return optionalPost.orElse(null);
     }
+
 
     @Transactional
     public Member validateMember(HttpServletRequest request) {

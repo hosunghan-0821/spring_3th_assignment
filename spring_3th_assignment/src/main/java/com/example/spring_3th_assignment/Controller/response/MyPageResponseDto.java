@@ -14,7 +14,9 @@ import java.util.List;
 public class MyPageResponseDto {
     private Long id;
     private String nickname;
-    private List<PostResponseDto> postResponseDtoList;
-    private List<CommentResponseDto> commentResponseDtoList;
-    private List<ReCommentResponseDto> reCommentResponseDtoList;
+    private List<PostResponseDto> postList;
+    private List<CommentResponseDto> commentList;
+    private List<ReCommentResponseDto> reCommentList;
+    private List<PostLikeResponseDto> postLikeList;
+    private List<CommentLikeResponseDto> commentLikeList;
 }

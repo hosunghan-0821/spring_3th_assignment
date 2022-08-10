@@ -3,11 +3,10 @@ package com.example.spring_3th_assignment.service;
 import com.example.spring_3th_assignment.Controller.request.ReCommentRequestDto;
 import com.example.spring_3th_assignment.Controller.response.ReCommentResponseDto;
 import com.example.spring_3th_assignment.Controller.response.ResponseDto;
-import com.example.spring_3th_assignment.domain.Comment;
-import com.example.spring_3th_assignment.domain.Member;
-import com.example.spring_3th_assignment.domain.Post;
-import com.example.spring_3th_assignment.domain.ReComment;
+import com.example.spring_3th_assignment.domain.*;
 import com.example.spring_3th_assignment.jwt.TokenProvider;
+import com.example.spring_3th_assignment.repository.MemberRepository;
+import com.example.spring_3th_assignment.repository.ReCommentLikeRepository;
 import com.example.spring_3th_assignment.repository.ReCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,9 @@ public class ReCommentService {
     private final CommentService commentService;
     private final TokenProvider tokenProvider;
     private final PostService postService;
+
+    private final MemberRepository memberRepository;
+    private final ReCommentLikeRepository reCommentLikeRepository;
 
 
     // 생성
@@ -193,5 +195,19 @@ public class ReCommentService {
             return null;
         }
         return tokenProvider.getMemberFromAuthentication();
+    }
+
+    public void reCommentLike(Long recommentId, String nickname) {
+        ReComment reComment = reCommentRepository.findById(recommentId).orElseThrow(() -> new RuntimeException("aa"));
+        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("aaa"));
+
+
+        ReCommentLike c = reCommentLikeRepository.findByReCommentAndMember(reComment, member).orElse(null);
+        if (c == null) {
+            ReCommentLike commentLike = new ReCommentLike(reComment, member);
+            reCommentLikeRepository.save(commentLike);
+        } else {
+            reCommentLikeRepository.delete(c);
+        }
     }
 }

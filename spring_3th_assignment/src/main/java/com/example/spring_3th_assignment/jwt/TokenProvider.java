@@ -81,7 +81,10 @@ public class TokenProvider {
 
 
   public Member getMemberFromAuthentication() {
+    System.out.println("여기들어옴");
+
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    System.out.println(authentication);
     if (authentication == null || AnonymousAuthenticationToken.class.
         isAssignableFrom(authentication.getClass())) {
       return null;

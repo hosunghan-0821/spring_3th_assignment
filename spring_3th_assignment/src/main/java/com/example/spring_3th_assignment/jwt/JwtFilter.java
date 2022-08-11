@@ -78,14 +78,17 @@ public class JwtFilter extends OncePerRequestFilter {
       UserDetails principal = userDetailsService.loadUserByUsername(subject);
 
       Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
-      SecurityContextHolder.getContext().setAuthentication(authentication);
 
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+      System.out.println("savegetContext()");
+      System.out.println(SecurityContextHolder.getContext().getAuthentication());
     }
 
     filterChain.doFilter(request, response);
   }
   private String resolveToken(HttpServletRequest request) {
     String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+    System.out.println("resolveToken() : ");
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
       return bearerToken.substring(7);
     }

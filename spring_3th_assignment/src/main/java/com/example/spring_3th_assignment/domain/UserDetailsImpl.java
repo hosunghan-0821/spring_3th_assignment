@@ -21,7 +21,6 @@ public class UserDetailsImpl implements UserDetails {
 
   private Member member;
 
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     SimpleGrantedAuthority authority = new SimpleGrantedAuthority(Authority.ROLE_MEMBER.toString());

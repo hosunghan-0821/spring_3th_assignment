@@ -66,6 +66,7 @@ public class Member extends Timestamped {
     this.commentLikeList.add(commentLike);
   }
 
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<ReCommentLike> reCommentLikeList = new ArrayList<>();
 

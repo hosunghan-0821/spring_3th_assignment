@@ -45,6 +45,8 @@ public class PostService {
                     "로그인이 필요합니다.");
         }
 
+//        System.out.println(request.getHeader("Refresh-Token"));
+//        System.out.println(request.getHeader("Authorization"));
         Member member = validateMember(request);
         if (null == member) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
@@ -56,7 +58,9 @@ public class PostService {
                 .content(requestDto.getContent())
                 .member(member)
                 .build();
+        System.out.println(1);
         postRepository.save(post);
+        System.out.println(2);
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .id(post.getId())

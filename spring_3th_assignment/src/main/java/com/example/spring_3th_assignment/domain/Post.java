@@ -30,6 +30,8 @@ public class Post extends Timestamped {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comment;
 
+//    @Column(nullable = true)
+//    private Long commentCount;
 
     @Column(nullable = true)
     private Long likeCount;

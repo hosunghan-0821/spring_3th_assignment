@@ -8,8 +8,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Builder
 @Getter
 @NoArgsConstructor
@@ -29,29 +27,30 @@ public class Post extends Timestamped {
     private String content;
 
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,  cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comment;
 
-  public void update(PostRequestDto postRequestDto) {
-    this.title = postRequestDto.getTitle();
-    this.content = postRequestDto.getContent();
-  }
+//    @Column(nullable = true)
+//    private Long commentCount;
+
+    @Column(nullable = true)
+    private Long likeCount;
+
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+    }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReComment> reComment;
 
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
-  private List<PostLike> postLikeList = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostLike> postLikeList = new ArrayList<>();
 
-
-  public void mappingPostLike(PostLike postLike) {
-    this.postLikeList.add(postLike);
-  }
-
-
-
-
+    public void mappingPostLike(PostLike postLike) {
+        this.postLikeList.add(postLike);
+    }
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)

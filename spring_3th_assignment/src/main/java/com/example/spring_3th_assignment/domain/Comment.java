@@ -40,8 +40,8 @@ public class Comment extends Timestamped {
   private String content;
 
 
-  @Column(nullable = false)
-  private long likeCount;
+  @Column(nullable = true)
+  private Long likeCount;
 
 
   @OneToMany(fetch = LAZY, mappedBy = "comment", cascade = CascadeType.REMOVE)

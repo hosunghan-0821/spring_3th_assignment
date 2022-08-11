@@ -23,7 +23,7 @@ public class CommentLike {
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_PostLike_Comment"))
+    @JoinColumn(name = "comment_id", foreignKey = @ForeignKey(name = "FK_PostLike_Comment"))
     private Comment comment;
 
     public static boolean bbbb(Optional<CommentLike> optionalCommentLike) {

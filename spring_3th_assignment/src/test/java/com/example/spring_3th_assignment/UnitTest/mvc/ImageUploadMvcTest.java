@@ -105,15 +105,15 @@ public class ImageUploadMvcTest {
     }
 
 
-    private void mockMemberSetup(){
-        String nickname = "winsomed96";
-        String password = "hosung114";
-
-
-        Member member = new Member(nickname,password);
-        UserDetailsImpl testUserDetails = new UserDetailsImpl(member);
-        mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails,"",null);
-    }
+//    private void mockMemberSetup(){
+//        String nickname = "winsomed96";
+//        String password = "hosung114";
+//
+//
+//        Member member = new Member(nickname,password);
+//        UserDetailsImpl testUserDetails = new UserDetailsImpl(member);
+//        mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails,"",null);
+//    }
 
     @Test
     @Order(1)
@@ -148,7 +148,7 @@ public class ImageUploadMvcTest {
     void postUpload()throws Exception{
 
 
-        this.mockMemberSetup();
+//        this.mockMemberSetup();
         String title = "제목";
         String imageUrl= "https://shopping-phinf.pstatic.net/main_1862208/18622086330.20200831140839.jpg";
         String content = "내용";

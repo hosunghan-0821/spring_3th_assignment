@@ -18,9 +18,10 @@ public class PostLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch =  LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_PostLike_User"))
     private Member member;
+
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_PostLike_Post"))
@@ -42,8 +43,7 @@ public class PostLike {
     }
 
 
-
-    public PostLike(Post post, Member member){
+    public PostLike(Post post, Member member) {
         this.post = post;
         this.member = member;
     }

@@ -6,21 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AllPostResponseDto {
-
-
-    private Long id;
-    private String title;
-    private String content;
+public class ReCommentLikeResponseDto {
+    private Long commentId;
+    private Long reCommentId;
     private String author;
-    private String postLikeNum;
-    private Long Comment;
+    private String content;
+    private Long reCommentLike;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

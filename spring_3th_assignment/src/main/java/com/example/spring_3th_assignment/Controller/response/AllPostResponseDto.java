@@ -20,6 +20,7 @@ public class AllPostResponseDto {
     private String content;
     private String author;
     private String postLikeNum;
+    private Long Comment;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

@@ -50,6 +50,7 @@ public class PostService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
+
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
@@ -137,11 +138,10 @@ public class PostService {
     public ResponseDto<?> getAllPost() {
         List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
         List<AllPostResponseDto> allPostResponseDtoList = new ArrayList<>();
-
         for (Post post : postList) {
             Member member = memberRepository.findById(post.getMember().getId()).orElse(null);
             List<PostLike> postLikeList = postLikeRepository.findByPost(post);
-
+            List<Comment> commentList = commentRepository.findAllByPost(post);
             AllPostResponseDto allPostResponseDto = AllPostResponseDto.builder()
                     .content(post.getContent())
                     .id(post.getId())
@@ -150,6 +150,7 @@ public class PostService {
                     .modifiedAt(post.getModifiedAt())
                     .title(post.getTitle())
                     .postLikeNum(Integer.toString(postLikeList.size()))
+                    .Comment((long) commentList.size())
                     .build();
             allPostResponseDtoList.add(allPostResponseDto);
         }

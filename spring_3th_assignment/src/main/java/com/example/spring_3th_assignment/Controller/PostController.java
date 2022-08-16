@@ -51,7 +51,7 @@ public class PostController {
 
     @PostMapping("/api/test")
     public String test(){
-        return "hello";
+        return "test2";
     }
 
     // 포스트 좋아요

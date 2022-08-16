@@ -72,6 +72,7 @@ jobs:
           --ignore-hidden-files \
           --s3-location s3://${{env.S3_BUCKET_NAME}}/$GITHUB_SHA.zip \
           --source .
+      working-directory : ${{env.working-directory}}
 
     - name: Deploy to AWS EC2 from S3
       run : |

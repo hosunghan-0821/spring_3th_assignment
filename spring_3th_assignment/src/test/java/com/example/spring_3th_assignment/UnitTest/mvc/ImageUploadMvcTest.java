@@ -31,6 +31,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.web.servlet.MockMvc;
@@ -69,6 +70,10 @@ public class ImageUploadMvcTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    AuthenticationConfiguration authenticationConfiguration;
+
+
     @MockBean
     S3UploaderService s3UploaderService;
 
@@ -99,6 +104,7 @@ public class ImageUploadMvcTest {
 
     @BeforeEach
     public void setup(){
+
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity(new JwtFilter(SECRET_KEY, tokenProvider, userDetailsService)))
                 .build();

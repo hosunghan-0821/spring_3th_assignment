@@ -18,6 +18,7 @@ public class AuthenticationEntryPointException implements
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) throws IOException {
+
     response.setContentType("application/json;charset=UTF-8");
     response.getWriter().println(
         new ObjectMapper().writeValueAsString(
@@ -25,5 +26,6 @@ public class AuthenticationEntryPointException implements
         )
     );
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
   }
 }

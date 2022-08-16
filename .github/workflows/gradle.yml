@@ -31,6 +31,6 @@ jobs:
 
     - name: Build with Gradle
       run: |
-       chmod +x ./spirng_3th_assignment/gradlew
+       chmod +x ./spring_3th_assignment/gradlew
        ./spring_3th_assignment/gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
 

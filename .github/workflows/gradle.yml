@@ -24,7 +24,7 @@ jobs:
 
     - name: make application.properties
       run: |
-        cd ./src/main/resources
+        cd ./spring_3th_assignment/src/main/resources
         touch ./application.properties
         echo "${{secrets.PROPERTIES_APP}}" > ./application.properties
       shell: bash

@@ -49,6 +49,11 @@ public class PostController {
         return postService.deletePost(id, request);
     }
 
+    @PostMapping("/api/test")
+    public String test(){
+        return "hello";
+    }
+
     // 포스트 좋아요
     @PostMapping("/api/post/{id}/like")
     @PreAuthorize("isAuthenticated()")

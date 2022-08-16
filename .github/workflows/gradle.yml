@@ -25,15 +25,15 @@ jobs:
         distribution: 'temurin'
 
     - name: make application.properties
-      run: |
+      run: | 
         cd ./src/main/resources
         touch ./application.properties
         echo "${{secrets.PROPERTIES_APP}}" > ./application.properties
-        working-directory:${{env.working-directory}}
       shell: bash
-
+      working-directory : ${{env.working-directory}}
+      
     - name: Build with Gradle
       run: |
        chmod +x ./gradlew
-       ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
-       working-directory:${{env.working-directory}}
+       ./gradlew build
+      working-directory : ${{env.working-directory}} 

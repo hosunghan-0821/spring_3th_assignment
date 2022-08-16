@@ -4,6 +4,7 @@ package com.example.spring_3th_assignment.domain;
 import com.example.spring_3th_assignment.shared.Authority;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.Collection;
 
 @Data
 @NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
@@ -26,6 +28,15 @@ public class UserDetailsImpl implements UserDetails {
     authorities.add(authority);
     return authorities;
   }
+
+  public Member getMember() {
+    return member;
+  }
+
+  public Long getId() {
+    return member.getId();
+  }
+
 
   @Override
   public String getPassword() {

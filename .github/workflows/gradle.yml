@@ -13,6 +13,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./spring_3th_assignment
 
     steps:
     - uses: actions/checkout@v3
@@ -24,13 +26,14 @@ jobs:
 
     - name: make application.properties
       run: |
-        cd ./spring_3th_assignment/src/main/resources
+        cd ./src/main/resources
         touch ./application.properties
         echo "${{secrets.PROPERTIES_APP}}" > ./application.properties
+        working-directory:${{env.working-directory}}
       shell: bash
 
     - name: Build with Gradle
       run: |
-       chmod +x ./spring_3th_assignment/gradlew
-       ./spring_3th_assignment/gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
-
+       chmod +x ./gradlew
+       ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
+       working-directory:${{env.working-directory}}
